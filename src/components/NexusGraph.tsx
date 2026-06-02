@@ -57,6 +57,14 @@ interface SelectedNode {
   connectedIds: Set<string>
 }
 
+export interface NexusGraphProps {
+  queryHighlightIds?: string[]
+  userType: UserType
+  onUserTypeChange: (u: UserType) => void
+  pillarFilter: PillarFilter
+  onPillarFilterChange: (p: PillarFilter) => void
+}
+
 // ─── Design constants ─────────────────────────────────────────────────────────
 
 const NODE_COLOUR: Record<NodeType, string> = {
@@ -79,7 +87,6 @@ const EDGE_COLOUR: Record<Relationship, string> = {
   CONTACTS: 'rgba(136,135,128,0.4)',
 }
 
-// Ring radius by type (innermost → outermost), fraction of half-width
 const RING_RANK: Record<NodeType, number> = {
   COUNCIL_ACTION: 1,
   COUNCIL_STRATEGY: 2,
@@ -91,7 +98,6 @@ const RING_RANK: Record<NodeType, number> = {
   CONTRADICTION: 1,
 }
 
-// Which node types are emphasised per user type (others are dimmed but visible for staff)
 const USER_EMPHASIS: Record<UserType, NodeType[]> = {
   CITIZEN: ['FORM', 'CONTACT'],
   CONTRACTOR: ['COUNCIL_ACTION', 'STATE_LEG'],
@@ -132,31 +138,32 @@ const SKIP_META_KEYS = new Set(['links'])
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function NexusGraph() {
+export default function NexusGraph({
+  queryHighlightIds,
+  userType,
+  onUserTypeChange,
+  pillarFilter,
+  onPillarFilterChange,
+}: NexusGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
-  const [pillarFilter, setPillarFilter] = useState<PillarFilter>('ALL')
-  const [userType, setUserType] = useState<UserType>('COUNCIL_STAFF')
   const [selected, setSelected] = useState<SelectedNode | null>(null)
   const [tooltip, setTooltip] = useState<{ x: number; y: number; node: SimNode } | null>(null)
-  const simulationRef = useRef<d3.Simulation<SimNode, SimLink> | null>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Derive visible nodes based on pillar filter
+  // Live refs to D3 selections so the highlight effect can update without re-simulation
+  const nodeSelRef = useRef<d3.Selection<SVGGElement, SimNode, SVGGElement, unknown> | null>(null)
+  const linkSelRef = useRef<d3.Selection<SVGLineElement, SimLink, SVGGElement, unknown> | null>(null)
+  const emphasisRef = useRef<NodeType[]>(USER_EMPHASIS[userType])
+
   const visibleNodes = useCallback((): SimNode[] => {
     const nodes = rawGraph.nodes as GraphNode[]
     const edges = rawGraph.edges as GraphEdge[]
-
     const degreeMap = new Map<string, number>()
     edges.forEach(e => {
       degreeMap.set(e.source, (degreeMap.get(e.source) ?? 0) + 1)
       degreeMap.set(e.target, (degreeMap.get(e.target) ?? 0) + 1)
     })
-
     return nodes
-      .filter(n => {
-        if (pillarFilter === 'ALL') return true
-        return n.pillar === pillarFilter || n.pillar === 'BOTH'
-      })
+      .filter(n => pillarFilter === 'ALL' || n.pillar === pillarFilter || n.pillar === 'BOTH')
       .map(n => ({ ...n, degree: degreeMap.get(n.id) ?? 0, x: undefined, y: undefined }))
   }, [pillarFilter])
 
@@ -166,11 +173,55 @@ export default function NexusGraph() {
       .map(e => ({ ...e, sourceId: e.source, targetId: e.target, source: e.source, target: e.target }))
   }, [])
 
-  // ─── D3 render ──────────────────────────────────────────────────────────────
+  // ─── Query highlight effect — runs when queryHighlightIds changes ─────────────
 
   useEffect(() => {
+    const nodeSel = nodeSelRef.current
+    const linkSel = linkSelRef.current
+    const emphasis = emphasisRef.current
+    if (!nodeSel || !linkSel) return
+
+    if (!queryHighlightIds || queryHighlightIds.length === 0) {
+      // Reset to default emphasis state
+      nodeSel.selectAll<SVGCircleElement, SimNode>('circle')
+        .attr('opacity', (n: SimNode) =>
+          emphasis.includes(n.type) ? 1 : (userType === 'COUNCIL_STAFF' ? 0.85 : 0.35),
+        )
+        .attr('stroke-width', (n: SimNode) => n.type === 'CONTRADICTION' ? 2 : 1)
+        .attr('stroke', (n: SimNode) => n.type === 'CONTRADICTION' ? '#E24B4A' : 'rgba(255,255,255,0.15)')
+      nodeSel.selectAll('text').attr('opacity', 1)
+      linkSel.attr('opacity', 1).attr('stroke-width', (l: SimLink) => l.relationship === 'CONTRADICTS' ? 2 : 1)
+      return
+    }
+
+    const hitSet = new Set(queryHighlightIds)
+
+    nodeSel.selectAll<SVGCircleElement, SimNode>('circle')
+      .attr('opacity', (n: SimNode) => hitSet.has(n.id) ? 1 : 0.1)
+      .attr('stroke', (n: SimNode) => hitSet.has(n.id) ? NODE_COLOUR[n.type] : 'rgba(255,255,255,0.08)')
+      .attr('stroke-width', (n: SimNode) => hitSet.has(n.id) ? 2.5 : 0.5)
+
+    nodeSel.selectAll<SVGTextElement, SimNode>('text')
+      .attr('opacity', (n: SimNode) => hitSet.has(n.id) ? 1 : 0.08)
+
+    linkSel
+      .attr('opacity', (l: SimLink) => {
+        const src = typeof l.source === 'object' ? (l.source as SimNode).id : l.source as string
+        const tgt = typeof l.target === 'object' ? (l.target as SimNode).id : l.target as string
+        return (hitSet.has(src) && hitSet.has(tgt)) ? 1 : 0.05
+      })
+      .attr('stroke-width', (l: SimLink) => l.relationship === 'CONTRADICTS' ? 2 : 1)
+  }, [queryHighlightIds, userType])
+
+  // ─── Main D3 render ───────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    emphasisRef.current = USER_EMPHASIS[userType]
+
     const svg = d3.select(svgRef.current!)
     svg.selectAll('*').remove()
+    nodeSelRef.current = null
+    linkSelRef.current = null
 
     const W = svgRef.current!.clientWidth || window.innerWidth
     const H = svgRef.current!.clientHeight || window.innerHeight
@@ -178,82 +229,58 @@ export default function NexusGraph() {
     const cy = H / 2
     const maxR = Math.min(cx, cy) * 0.88
 
-    // Defs — pulse animation for contradictions
-    const defs = svg.append('defs')
-    defs.append('filter').attr('id', 'glow')
-      .append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'blur')
-    defs.select('filter')
-      .append('feMerge').selectAll('feMergeNode').data(['blur', 'SourceGraphic'])
-      .enter().append('feMergeNode').attr('in', d => d)
-
     const root = svg.append('g').attr('class', 'root')
 
-    // Zoom
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.3, 4])
       .on('zoom', e => root.attr('transform', e.transform))
     svg.call(zoom)
 
-    // Background hemisphere labels
     root.append('text')
       .attr('x', cx * 0.5).attr('y', 28)
       .attr('text-anchor', 'middle')
       .attr('fill', 'rgba(29,158,117,0.18)')
-      .attr('font-size', 13)
-      .attr('font-family', 'monospace')
-      .attr('letter-spacing', 3)
+      .attr('font-size', 13).attr('font-family', 'monospace').attr('letter-spacing', 3)
       .text('WASTE RECOVERY')
 
     root.append('text')
       .attr('x', cx * 1.5).attr('y', 28)
       .attr('text-anchor', 'middle')
       .attr('fill', 'rgba(55,138,221,0.18)')
-      .attr('font-size', 13)
-      .attr('font-family', 'monospace')
-      .attr('letter-spacing', 3)
+      .attr('font-size', 13).attr('font-family', 'monospace').attr('letter-spacing', 3)
       .text('CLIMATE ADAPTATION')
 
-    // Hemisphere divider
     root.append('line')
-      .attr('x1', cx).attr('y1', 0)
-      .attr('x2', cx).attr('y2', H)
-      .attr('stroke', 'rgba(255,255,255,0.06)')
-      .attr('stroke-dasharray', '4 6')
+      .attr('x1', cx).attr('y1', 0).attr('x2', cx).attr('y2', H)
+      .attr('stroke', 'rgba(255,255,255,0.06)').attr('stroke-dasharray', '4 6')
 
-    // Ring circles (guide rings)
     ;[1, 2, 3, 4].forEach(rank => {
-      const r = ringRadius(rank, maxR)
       root.append('circle')
-        .attr('cx', cx).attr('cy', cy).attr('r', r)
-        .attr('fill', 'none')
-        .attr('stroke', 'rgba(255,255,255,0.04)')
-        .attr('stroke-width', 1)
+        .attr('cx', cx).attr('cy', cy).attr('r', ringRadius(rank, maxR))
+        .attr('fill', 'none').attr('stroke', 'rgba(255,255,255,0.04)').attr('stroke-width', 1)
     })
 
     const nodes = visibleNodes()
     const nodeIds = new Set(nodes.map(n => n.id))
     const links = visibleEdges(nodeIds)
-
     const emphasis = USER_EMPHASIS[userType]
 
-    // Link layer
     const linkGroup = root.append('g').attr('class', 'links')
     const linkSel = linkGroup.selectAll<SVGLineElement, SimLink>('line')
       .data(links)
       .enter().append('line')
       .attr('stroke', d => EDGE_COLOUR[d.relationship])
       .attr('stroke-width', d => d.relationship === 'CONTRADICTS' ? 2 : 1)
-      .attr('class', d => `edge-${d.relationship}`)
+    linkSelRef.current = linkSel
 
-    // Node group
     const nodeGroup = root.append('g').attr('class', 'nodes')
     const nodeSel = nodeGroup.selectAll<SVGGElement, SimNode>('g')
       .data(nodes, d => d.id)
       .enter().append('g')
       .attr('class', 'node')
       .style('cursor', 'pointer')
+    nodeSelRef.current = nodeSel
 
-    // Node circle
     nodeSel.append('circle')
       .attr('r', d => nodeRadius(d.degree))
       .attr('fill', d => NODE_COLOUR[d.type])
@@ -261,55 +288,35 @@ export default function NexusGraph() {
       .attr('stroke-width', d => d.type === 'CONTRADICTION' ? 2 : 1)
       .attr('opacity', d => emphasis.includes(d.type) ? 1 : (userType === 'COUNCIL_STAFF' ? 0.85 : 0.35))
 
-    // Contradiction warning badge (amber triangle)
     nodeSel.filter(d => d.contradictions.length > 0 || d.type === 'CONTRADICTION')
       .append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', d => -(nodeRadius(d.degree) + 2))
-      .attr('font-size', 9)
-      .attr('fill', '#fac775')
+      .attr('font-size', 9).attr('fill', '#fac775')
       .text('⚠')
 
-    // Node label
     nodeSel.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', d => nodeRadius(d.degree) + 11)
-      .attr('font-size', 8)
-      .attr('font-family', 'monospace')
+      .attr('font-size', 8).attr('font-family', 'monospace')
       .attr('fill', d => {
         if (!emphasis.includes(d.type) && userType !== 'COUNCIL_STAFF') return 'rgba(255,255,255,0.2)'
         return d.type === 'COUNCIL_ACTION' ? 'rgba(255,255,255,0.75)' : NODE_COLOUR[d.type]
       })
       .attr('pointer-events', 'none')
-      .text(d => {
-        const max = 22
-        return d.label.length > max ? d.label.slice(0, max - 1) + '…' : d.label
-      })
+      .text(d => d.label.length > 22 ? d.label.slice(0, 21) + '…' : d.label)
 
-    // Drag
     const drag = d3.drag<SVGGElement, SimNode>()
-      .on('start', (event, d) => {
-        if (!event.active) sim.alphaTarget(0.3).restart()
-        d.fx = d.x; d.fy = d.y
-      })
+      .on('start', (event, d) => { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y })
       .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y })
-      .on('end', (event, d) => {
-        if (!event.active) sim.alphaTarget(0)
-        d.fx = null; d.fy = null
-      })
+      .on('end', (event, d) => { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null })
     nodeSel.call(drag)
 
-    // Hover
     nodeSel
-      .on('mouseenter', (event: MouseEvent, d: SimNode) => {
-        setTooltip({ x: event.clientX, y: event.clientY, node: d })
-      })
-      .on('mousemove', (event: MouseEvent) => {
-        setTooltip(t => t ? { ...t, x: event.clientX, y: event.clientY } : null)
-      })
+      .on('mouseenter', (event: MouseEvent, d: SimNode) => setTooltip({ x: event.clientX, y: event.clientY, node: d }))
+      .on('mousemove', (event: MouseEvent) => setTooltip(t => t ? { ...t, x: event.clientX, y: event.clientY } : null))
       .on('mouseleave', () => setTooltip(null))
 
-    // Click — select node and highlight connected
     nodeSel.on('click', (event: MouseEvent, d: SimNode) => {
       event.stopPropagation()
       const connectedIds = new Set<string>([d.id])
@@ -321,7 +328,6 @@ export default function NexusGraph() {
       })
       setSelected({ node: d, connectedIds })
 
-      // Dim non-connected
       nodeSel.selectAll<SVGCircleElement, SimNode>('circle')
         .attr('opacity', (n: SimNode) => connectedIds.has(n.id) ? 1 : 0.12)
       nodeSel.selectAll<SVGTextElement, SimNode>('text')
@@ -338,29 +344,22 @@ export default function NexusGraph() {
           return (src === d.id || tgt === d.id) && l.relationship === 'CONTRADICTS' ? 3 : 1
         })
 
-      // Pulse contradiction nodes if a CONTRADICTION node is clicked
       if (d.type === 'CONTRADICTION' || d.contradictions.length > 0) {
         nodeSel.filter((n: SimNode) => d.contradictions.includes(n.id) || n.contradictions.includes(d.id))
-          .select('circle')
-          .attr('stroke', '#E24B4A')
-          .attr('stroke-width', 3)
+          .select('circle').attr('stroke', '#E24B4A').attr('stroke-width', 3)
       }
     })
 
-    // Double-click — recentre
     nodeSel.on('dblclick', (event: MouseEvent, d: SimNode) => {
       event.stopPropagation()
       if (d.x == null || d.y == null) return
       const scale = 1.8
-      const tx = W / 2 - scale * d.x
-      const ty = H / 2 - scale * d.y
       svg.transition().duration(600).call(
         zoom.transform,
-        d3.zoomIdentity.translate(tx, ty).scale(scale),
+        d3.zoomIdentity.translate(W / 2 - scale * d.x, H / 2 - scale * d.y).scale(scale),
       )
     })
 
-    // Click background — reset
     svg.on('click', () => {
       setSelected(null)
       nodeSel.selectAll<SVGCircleElement, SimNode>('circle')
@@ -371,8 +370,6 @@ export default function NexusGraph() {
       linkSel.attr('opacity', 1).attr('stroke-width', (l: SimLink) => l.relationship === 'CONTRADICTS' ? 2 : 1)
     })
 
-    // ─── Force simulation ──────────────────────────────────────────────────────
-
     const sim = d3.forceSimulation<SimNode>(nodes)
       .force('link', d3.forceLink<SimNode, SimLink>(links)
         .id(d => d.id)
@@ -381,11 +378,8 @@ export default function NexusGraph() {
       )
       .force('charge', d3.forceManyBody<SimNode>().strength(-220))
       .force('collision', d3.forceCollide<SimNode>().radius(d => nodeRadius(d.degree) + 10))
-      // Hemisphere x-force: push nodes toward their pillar side
       .force('pillarX', d3.forceX<SimNode>().x(d => pillarX(d.pillar, cx)).strength(0.25))
-      // Ring y-force: push toward their ring radius from centre
       .force('ringR', (() => {
-        // Custom radial force toward ring radius
         const alpha = 0.18
         return function (a: number) {
           nodes.forEach(n => {
@@ -407,11 +401,8 @@ export default function NexusGraph() {
           .attr('y1', d => (d.source as SimNode).y ?? 0)
           .attr('x2', d => (d.target as SimNode).x ?? 0)
           .attr('y2', d => (d.target as SimNode).y ?? 0)
-
         nodeSel.attr('transform', d => `translate(${d.x ?? 0},${d.y ?? 0})`)
       })
-
-    simulationRef.current = sim
 
     return () => { sim.stop() }
   }, [pillarFilter, userType, visibleNodes, visibleEdges])
@@ -419,13 +410,13 @@ export default function NexusGraph() {
   // ─── Render ───────────────────────────────────────────────────────────────────
 
   return (
-    <div ref={containerRef} className="relative w-screen h-screen" style={{ background: '#0d2240' }}>
+    <div className="relative w-full h-full">
       {/* Pillar toggle — top left */}
       <div className="absolute top-4 left-4 z-10 flex gap-2">
         {(['ALL', 'WASTE', 'CLIMATE'] as PillarFilter[]).map(p => (
           <button
             key={p}
-            onClick={() => { setPillarFilter(p); setSelected(null) }}
+            onClick={() => onPillarFilterChange(p)}
             className="px-3 py-1 text-xs font-mono tracking-widest border transition-colors"
             style={{
               background: pillarFilter === p ? 'rgba(29,158,117,0.25)' : 'rgba(13,34,64,0.8)',
@@ -443,7 +434,7 @@ export default function NexusGraph() {
         {(['CITIZEN', 'CONTRACTOR', 'COUNCIL_STAFF'] as UserType[]).map(u => (
           <button
             key={u}
-            onClick={() => { setUserType(u); setSelected(null) }}
+            onClick={() => onUserTypeChange(u)}
             className="px-3 py-1 text-xs font-mono tracking-widest border transition-colors"
             style={{
               background: userType === u ? 'rgba(250,199,117,0.15)' : 'rgba(13,34,64,0.8)',
@@ -456,21 +447,8 @@ export default function NexusGraph() {
         ))}
       </div>
 
-      {/* Title */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none">
-        <span
-          className="text-xs font-mono tracking-widest"
-          style={{ color: 'rgba(255,255,255,0.3)' }}
-        >
-          NEXUS — ALBURYCITY LEGISLATIVE INTELLIGENCE
-        </span>
-      </div>
-
       {/* Legend — bottom left */}
-      <div
-        className="absolute bottom-4 left-4 z-10 text-xs font-mono"
-        style={{ color: 'rgba(255,255,255,0.4)' }}
-      >
+      <div className="absolute bottom-4 left-4 z-10 text-xs font-mono">
         {(Object.entries(NODE_COLOUR) as [NodeType, string][]).map(([type, colour]) => (
           <div key={type} className="flex items-center gap-2 mb-1">
             <span className="w-2 h-2 rounded-full inline-block" style={{ background: colour }} />
@@ -479,12 +457,7 @@ export default function NexusGraph() {
         ))}
       </div>
 
-      {/* SVG */}
-      <svg
-        ref={svgRef}
-        className="w-full h-full"
-        style={{ background: '#0d2240' }}
-      />
+      <svg ref={svgRef} className="w-full h-full" style={{ background: '#0d2240' }} />
 
       {/* Hover tooltip */}
       {tooltip && (
@@ -513,49 +486,33 @@ export default function NexusGraph() {
         </div>
       )}
 
-      {/* Metadata panel — right side on node click */}
+      {/* Node metadata panel */}
       {selected && (
         <div
           className="absolute top-0 right-0 h-full w-80 z-20 overflow-y-auto"
-          style={{
-            background: 'rgba(10,25,50,0.97)',
-            borderLeft: `1px solid ${NODE_COLOUR[selected.node.type]}`,
-          }}
+          style={{ background: 'rgba(10,25,50,0.97)', borderLeft: `1px solid ${NODE_COLOUR[selected.node.type]}` }}
         >
           <div className="p-4">
-            {/* Panel header */}
             <div className="flex items-start justify-between mb-3">
               <div>
-                <div
-                  className="text-xs font-mono tracking-widest mb-1"
-                  style={{ color: NODE_COLOUR[selected.node.type] }}
-                >
+                <div className="text-xs font-mono tracking-widest mb-1" style={{ color: NODE_COLOUR[selected.node.type] }}>
                   {selected.node.type}
                 </div>
                 <div className="text-sm font-mono font-bold" style={{ color: '#fff', lineHeight: 1.3 }}>
                   {selected.node.label}
                 </div>
               </div>
-              <button
-                onClick={() => setSelected(null)}
-                className="text-xs font-mono ml-2 mt-1"
-                style={{ color: 'rgba(255,255,255,0.4)' }}
-              >
+              <button onClick={() => setSelected(null)} className="text-xs font-mono ml-2 mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
                 ✕
               </button>
             </div>
 
-            {/* Pillar badge */}
             <div className="mb-3">
               <span
                 className="text-xs font-mono px-2 py-0.5"
                 style={{
-                  background: selected.node.pillar === 'WASTE'
-                    ? 'rgba(29,158,117,0.2)' : selected.node.pillar === 'CLIMATE'
-                      ? 'rgba(55,138,221,0.2)' : 'rgba(250,199,117,0.2)',
-                  color: selected.node.pillar === 'WASTE'
-                    ? '#1D9E75' : selected.node.pillar === 'CLIMATE'
-                      ? '#378ADD' : '#fac775',
+                  background: selected.node.pillar === 'WASTE' ? 'rgba(29,158,117,0.2)' : selected.node.pillar === 'CLIMATE' ? 'rgba(55,138,221,0.2)' : 'rgba(250,199,117,0.2)',
+                  color: selected.node.pillar === 'WASTE' ? '#1D9E75' : selected.node.pillar === 'CLIMATE' ? '#378ADD' : '#fac775',
                   border: '1px solid currentColor',
                   borderRadius: 1,
                 }}
@@ -564,28 +521,20 @@ export default function NexusGraph() {
               </span>
             </div>
 
-            {/* Description */}
             <p className="text-xs leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>
               {selected.node.description}
             </p>
 
-            {/* Metadata */}
             {Object.keys(selected.node.metadata).length > 0 && (
               <div className="mb-4">
-                <div
-                  className="text-xs font-mono tracking-wider mb-2"
-                  style={{ color: 'rgba(255,255,255,0.35)' }}
-                >
+                <div className="text-xs font-mono tracking-wider mb-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
                   METADATA
                 </div>
                 {(Object.entries(selected.node.metadata) as [string, unknown][])
                   .filter(([k]) => !SKIP_META_KEYS.has(k))
                   .map(([key, value]) => (
                     <div key={key} className="mb-2">
-                      <div
-                        className="text-xs font-mono"
-                        style={{ color: 'rgba(255,255,255,0.35)', fontSize: 9, textTransform: 'uppercase', letterSpacing: 1 }}
-                      >
+                      <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 9, fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: 1 }}>
                         {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
                       </div>
                       <div className="text-xs" style={{ color: '#fff', lineHeight: 1.4 }}>
@@ -596,28 +545,19 @@ export default function NexusGraph() {
               </div>
             )}
 
-            {/* Contradictions */}
             {selected.node.contradictions.length > 0 && (
               <div className="mb-4 p-3" style={{ background: 'rgba(226,75,74,0.1)', border: '1px solid rgba(226,75,74,0.4)' }}>
-                <div className="text-xs font-mono mb-2" style={{ color: '#E24B4A' }}>
-                  ⚠ CONTRADICTIONS
-                </div>
+                <div className="text-xs font-mono mb-2" style={{ color: '#E24B4A' }}>⚠ CONTRADICTIONS</div>
                 {selected.node.contradictions.map(cid => {
                   const cn = rawGraph.nodes.find(n => n.id === cid)
                   return cn ? (
-                    <div key={cid} className="text-xs mb-1" style={{ color: 'rgba(226,75,74,0.85)' }}>
-                      {cn.label}
-                    </div>
+                    <div key={cid} className="text-xs mb-1" style={{ color: 'rgba(226,75,74,0.85)' }}>{cn.label}</div>
                   ) : null
                 })}
               </div>
             )}
 
-            {/* Connected count */}
-            <div
-              className="text-xs font-mono mt-2"
-              style={{ color: 'rgba(255,255,255,0.25)' }}
-            >
+            <div className="text-xs font-mono mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>
               {selected.connectedIds.size - 1} direct connection{selected.connectedIds.size !== 2 ? 's' : ''}
             </div>
           </div>
