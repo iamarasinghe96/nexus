@@ -15,6 +15,7 @@ interface NexusQueryProps {
   graphData: GraphData
   userType: UserType
   onHighlight: (nodeIds: string[]) => void
+  onQuery?: (query: string) => void
 }
 
 // ─── Groq API ─────────────────────────────────────────────────────────────────
@@ -116,7 +117,7 @@ const EXAMPLE_QUERIES = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function NexusQuery({ graphData, userType, onHighlight }: NexusQueryProps) {
+export default function NexusQuery({ graphData, userType, onHighlight, onQuery }: NexusQueryProps) {
   const getNode = (id: string): GraphNode | undefined => graphData.nodes.find(n => n.id === id)
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
@@ -133,6 +134,7 @@ export default function NexusQuery({ graphData, userType, onHighlight }: NexusQu
     setResult(null)
     setOpen(true)
     try {
+      onQuery?.(trimmed)
       const graphContext = buildGraphContext(graphData.nodes)
       const res = await queryGroq(trimmed, userType, graphContext)
       setResult(res)

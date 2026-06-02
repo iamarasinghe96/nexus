@@ -1,24 +1,44 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
-import { getFirestore, Firestore } from 'firebase/firestore'
+// Firebase v9 modular SDK — same package as gstatic.com/firebasejs/9.x, served via npm
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app'
+import { getFirestore, type Firestore } from 'firebase/firestore'
+import { getAuth, type Auth } from 'firebase/auth'
 
-// Lazily initialised — returns null if env vars are absent so the app
-// runs without Firebase (edit saves will be skipped gracefully).
-let app: FirebaseApp | null = null
-let db: Firestore | null = null
+let _app: FirebaseApp | null = null
+let _db: Firestore | null = null
+let _auth: Auth | null = null
 
-export function getFirestoreDb(): Firestore | null {
-  const apiKey = import.meta.env.VITE_FIREBASE_API_KEY
-  const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID
-  const authDomain = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN
-
-  if (!apiKey || !projectId || !authDomain) return null
-
-  if (!app) {
-    app = getApps().length
-      ? getApps()[0]!
-      : initializeApp({ apiKey, authDomain, projectId })
+function getConfig() {
+  return {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string | undefined,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID as string | undefined,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string | undefined,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID as string | undefined,
   }
+}
 
-  if (!db) db = getFirestore(app)
-  return db
+export function isFirebaseConfigured(): boolean {
+  const c = getConfig()
+  return !!(c.apiKey && c.projectId && c.authDomain && c.appId)
+}
+
+function getApp(): FirebaseApp | null {
+  if (!isFirebaseConfigured()) return null
+  if (_app) return _app
+  const c = getConfig()
+  _app = getApps().length ? getApps()[0]! : initializeApp(c as Required<typeof c>)
+  return _app
+}
+
+export function getDb(): Firestore | null {
+  const app = getApp()
+  if (!app) return null
+  if (!_db) _db = getFirestore(app)
+  return _db
+}
+
+export function getAuthInstance(): Auth | null {
+  const app = getApp()
+  if (!app) return null
+  if (!_auth) _auth = getAuth(app)
+  return _auth
 }
