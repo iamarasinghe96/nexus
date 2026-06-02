@@ -225,6 +225,24 @@ export default function NexusQuery({ graphData, userType, onHighlight, onQuery }
         >
           {loading ? '…' : 'ASK →'}
         </button>
+
+        {/* Minimise toggle — only shown when panel has content */}
+        {(result || error) && (
+          <button
+            onClick={() => setOpen(o => !o)}
+            className="px-2 py-2 text-xs font-mono border transition-colors"
+            title={open ? 'Minimise results' : 'Show results'}
+            style={{
+              background: 'rgba(13,34,64,0.8)',
+              borderColor: 'rgba(255,255,255,0.15)',
+              color: 'rgba(255,255,255,0.4)',
+              borderRadius: 2,
+              lineHeight: 1,
+            }}
+          >
+            {open ? '▼' : '▲'}
+          </button>
+        )}
       </div>
 
       {/* Results panel */}
