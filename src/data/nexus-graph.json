@@ -477,7 +477,8 @@
       "metadata": {
         "issuingBody": "AlburyCity — Resource Recovery Team",
         "applicableTo": "Commercial waste generators and contractors",
-        "processingTime": "Contact Resource Recovery Team"
+        "processingTime": "Contact Resource Recovery Team",
+        "url": "https://www.alburycity.nsw.gov.au/living-in-albury/waste-recycling/albury-waste-management-centre"
       },
       "contradictions": []
     },
@@ -492,7 +493,8 @@
         "applicableTo": "Existing EPL holders seeking to change licensed activities",
         "processingTime": "Typically 60-90 days",
         "relevantForActions": ["action-ivc", "action-mbt", "action-cd-mrf"],
-        "regulatoryBase": "POEO Act 1997"
+        "regulatoryBase": "POEO Act 1997",
+        "url": "https://www.epa.nsw.gov.au/licensing-and-regulation/licensing/environment-protection-licences/apply-vary-transfer-or-surrender-an-epl"
       },
       "contradictions": []
     },
@@ -507,7 +509,8 @@
         "applicableTo": "AlburyCity (as landowner and operator)",
         "criticalDeadline": "Lodge by ~2027 to meet 2033 site development start",
         "leadTime": "5.5 years minimum (Table 10-2, WMS 2023)",
-        "relatedApprovals": ["EPL variation", "EPBC assessment if MNES triggered", "Biodiversity assessment"]
+        "relatedApprovals": ["EPL variation", "EPBC assessment if MNES triggered", "Biodiversity assessment"],
+        "url": "https://www.alburycity.nsw.gov.au/building-planning/development-applications"
       },
       "contradictions": []
     },
@@ -521,7 +524,8 @@
         "issuingBody": "Clean Energy Regulator",
         "submissionDeadline": "31 October each year",
         "reportingPeriod": "1 July to 30 June",
-        "submissionPortal": "OSCAR (Online System for Comprehensive Activity Reporting)"
+        "submissionPortal": "OSCAR (Online System for Comprehensive Activity Reporting)",
+        "url": "https://www.cleanenergyregulator.gov.au/NGER/Registering-and-reporting"
       },
       "contradictions": []
     },
@@ -534,7 +538,8 @@
       "metadata": {
         "issuingBody": "Cities Power Partnership (Climate Council)",
         "reportingFrequency": "Annual",
-        "pledgeCategories": ["renewable energy", "energy efficiency", "sustainable transport", "advocacy"]
+        "pledgeCategories": ["renewable energy", "energy efficiency", "sustainable transport", "advocacy"],
+        "url": "https://citiespowerpartnership.org.au/take-action/pledge/"
       },
       "contradictions": []
     },
@@ -547,7 +552,8 @@
       "metadata": {
         "issuingBody": "AlburyCity Finance",
         "cycle": "Annual — Integrated Planning and Reporting",
-        "legislativeBase": "Local Government Act 1993 (NSW) — IP&R framework"
+        "legislativeBase": "Local Government Act 1993 (NSW) — IP&R framework",
+        "url": "https://www.alburycity.nsw.gov.au/council/council-plans-strategies-and-policies/integrated-planning-and-reporting"
       },
       "contradictions": []
     },

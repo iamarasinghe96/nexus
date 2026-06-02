@@ -346,17 +346,35 @@ export default function NexusQuery({ graphData, userType, onHighlight, onQuery }
                             </div>
                           )}
                         </div>
-                        <button
-                          className="shrink-0 px-2 py-1 text-xs font-mono whitespace-nowrap"
-                          style={{
-                            background: 'rgba(151,196,89,0.15)',
-                            border: '1px solid rgba(151,196,89,0.5)',
-                            color: '#97C459',
-                            borderRadius: 2,
-                          }}
-                        >
-                          Apply here →
-                        </button>
+                        {node.metadata['url'] ? (
+                          <a
+                            href={String(node.metadata['url'])}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 px-2 py-1 text-xs font-mono whitespace-nowrap"
+                            style={{
+                              background: 'rgba(151,196,89,0.15)',
+                              border: '1px solid rgba(151,196,89,0.5)',
+                              color: '#97C459',
+                              borderRadius: 2,
+                              textDecoration: 'none',
+                            }}
+                          >
+                            Apply here →
+                          </a>
+                        ) : (
+                          <span
+                            className="shrink-0 px-2 py-1 text-xs font-mono whitespace-nowrap"
+                            style={{
+                              background: 'rgba(151,196,89,0.06)',
+                              border: '1px solid rgba(151,196,89,0.2)',
+                              color: 'rgba(151,196,89,0.4)',
+                              borderRadius: 2,
+                            }}
+                          >
+                            Contact to apply
+                          </span>
+                        )}
                       </div>
                     )
                   })}
