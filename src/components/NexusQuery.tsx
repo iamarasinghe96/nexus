@@ -21,15 +21,15 @@ interface NexusQueryProps {
 // ─── Groq API ─────────────────────────────────────────────────────────────────
 
 function buildGraphContext(nodes: GraphNode[]): string {
+  // Minimal context — id/label/type/pillar only to stay under Groq free-tier TPM limit.
+  // Descriptions and metadata are available via node click; they are not needed for routing queries.
   return JSON.stringify(
     nodes.map(n => ({
       id: n.id,
       label: n.label,
       type: n.type,
       pillar: n.pillar,
-      description: n.description,
       contradictions: n.contradictions,
-      metadata: n.metadata,
     })),
     null,
     0,

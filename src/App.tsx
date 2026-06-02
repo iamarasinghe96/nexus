@@ -150,17 +150,10 @@ export default function App() {
         />
       </div>
 
-      {/* Title */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none">
-        <span className="text-xs font-mono tracking-widest" style={{ color: 'rgba(255,255,255,0.15)' }}>
-          ALBURYCITY LEGISLATIVE INTELLIGENCE
-        </span>
-      </div>
-
-      {/* Firestore status indicator — top centre-right */}
+      {/* Firestore status indicator — bottom right, above legend */}
       <div
         className="absolute z-20 flex items-center gap-1.5 text-xs font-mono"
-        style={{ top: 20, right: isStaff ? 260 : 220 }}
+        style={{ bottom: 168, right: 12 }}
       >
         {dataSource === 'loading' ? (
           <>
@@ -182,7 +175,7 @@ export default function App() {
 
       {/* Google Auth — shown when COUNCIL_STAFF and Firebase is configured */}
       {isStaff && firebaseConfigured && !authLoading && (
-        <div className="absolute z-20 flex items-center gap-2" style={{ top: 44, right: 8 }}>
+        <div className="absolute z-20 flex items-center gap-2" style={{ top: 40, right: 8 }}>
           {user ? (
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono" style={{ color: 'rgba(255,255,255,0.35)' }}>
