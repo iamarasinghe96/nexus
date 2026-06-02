@@ -418,55 +418,62 @@ export default function NexusGraph({
       {/* Node metadata panel */}
       {selected && (
         <div
-          className="absolute top-0 right-0 h-full w-80 z-20 overflow-y-auto"
-          style={{ background: 'rgba(10,25,50,0.97)', borderLeft: `1px solid ${NODE_COLOUR[selected.node.type]}` }}
+          className="absolute right-0 z-20 overflow-y-auto"
+          style={{
+            top: '3.5rem',
+            height: 'calc(100% - 3.5rem)',
+            width: '17rem',
+            background: 'rgba(10,25,50,0.97)',
+            borderLeft: `1px solid ${NODE_COLOUR[selected.node.type]}`,
+            borderTop: `1px solid ${NODE_COLOUR[selected.node.type]}33`,
+          }}
         >
-          <div className="p-4">
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                <div className="text-xs font-mono tracking-widest mb-1" style={{ color: NODE_COLOUR[selected.node.type] }}>
-                  {selected.node.type}
+          <div className="p-3">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className="text-xs font-mono" style={{ color: NODE_COLOUR[selected.node.type], fontSize: 9, letterSpacing: 1 }}>
+                    {selected.node.type}
+                  </div>
+                  <span
+                    className="text-xs font-mono px-1.5 py-0.5"
+                    style={{
+                      background: selected.node.pillar === 'WASTE' ? 'rgba(29,158,117,0.2)' : selected.node.pillar === 'CLIMATE' ? 'rgba(55,138,221,0.2)' : 'rgba(250,199,117,0.2)',
+                      color: selected.node.pillar === 'WASTE' ? '#1D9E75' : selected.node.pillar === 'CLIMATE' ? '#378ADD' : '#fac775',
+                      border: '1px solid currentColor',
+                      borderRadius: 1,
+                      fontSize: 9,
+                    }}
+                  >
+                    {selected.node.pillar}
+                  </span>
                 </div>
-                <div className="text-sm font-mono font-bold" style={{ color: '#fff', lineHeight: 1.3 }}>
+                <div className="text-xs font-mono font-bold" style={{ color: '#fff', lineHeight: 1.3 }}>
                   {selected.node.label}
                 </div>
               </div>
-              <button onClick={() => setSelected(null)} className="text-xs font-mono ml-2 mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <button onClick={() => setSelected(null)} className="text-xs font-mono ml-2 shrink-0" style={{ color: 'rgba(255,255,255,0.4)' }}>
                 ✕
               </button>
             </div>
 
-            <div className="mb-3">
-              <span
-                className="text-xs font-mono px-2 py-0.5"
-                style={{
-                  background: selected.node.pillar === 'WASTE' ? 'rgba(29,158,117,0.2)' : selected.node.pillar === 'CLIMATE' ? 'rgba(55,138,221,0.2)' : 'rgba(250,199,117,0.2)',
-                  color: selected.node.pillar === 'WASTE' ? '#1D9E75' : selected.node.pillar === 'CLIMATE' ? '#378ADD' : '#fac775',
-                  border: '1px solid currentColor',
-                  borderRadius: 1,
-                }}
-              >
-                {selected.node.pillar}
-              </span>
-            </div>
-
-            <p className="text-xs leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.7)' }}>
+            <p className="text-xs leading-relaxed mb-3" style={{ color: 'rgba(255,255,255,0.65)', fontSize: 11 }}>
               {selected.node.description}
             </p>
 
             {Object.keys(selected.node.metadata).length > 0 && (
-              <div className="mb-4">
-                <div className="text-xs font-mono tracking-wider mb-2" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              <div className="mb-3">
+                <div className="text-xs font-mono tracking-wider mb-1.5" style={{ color: 'rgba(255,255,255,0.3)', fontSize: 9 }}>
                   METADATA
                 </div>
                 {(Object.entries(selected.node.metadata) as [string, unknown][])
                   .filter(([k]) => !SKIP_META_KEYS.has(k))
                   .map(([key, value]) => (
-                    <div key={key} className="mb-2">
-                      <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 9, fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: 1 }}>
+                    <div key={key} className="mb-1.5">
+                      <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 9, fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: 1 }}>
                         {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
                       </div>
-                      <div className="text-xs" style={{ color: '#fff', lineHeight: 1.4 }}>
+                      <div style={{ color: '#fff', lineHeight: 1.4, fontSize: 11 }}>
                         {formatMetadataValue(value)}
                       </div>
                     </div>
@@ -475,18 +482,18 @@ export default function NexusGraph({
             )}
 
             {selected.node.contradictions.length > 0 && (
-              <div className="mb-4 p-3" style={{ background: 'rgba(226,75,74,0.1)', border: '1px solid rgba(226,75,74,0.4)' }}>
-                <div className="text-xs font-mono mb-2" style={{ color: '#E24B4A' }}>⚠ CONTRADICTIONS</div>
+              <div className="mb-3 p-2" style={{ background: 'rgba(226,75,74,0.1)', border: '1px solid rgba(226,75,74,0.4)', borderRadius: 2 }}>
+                <div className="font-mono mb-1" style={{ color: '#E24B4A', fontSize: 9 }}>⚠ CONTRADICTIONS</div>
                 {selected.node.contradictions.map(cid => {
                   const cn = graphData.nodes.find(n => n.id === cid)
                   return cn ? (
-                    <div key={cid} className="text-xs mb-1" style={{ color: 'rgba(226,75,74,0.85)' }}>{cn.label}</div>
+                    <div key={cid} style={{ color: 'rgba(226,75,74,0.85)', fontSize: 11 }} className="mb-0.5">{cn.label}</div>
                   ) : null
                 })}
               </div>
             )}
 
-            <div className="text-xs font-mono mt-2" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            <div className="font-mono mt-2" style={{ color: 'rgba(255,255,255,0.2)', fontSize: 9 }}>
               {selected.connectedIds.size - 1} direct connection{selected.connectedIds.size !== 2 ? 's' : ''}
             </div>
           </div>
