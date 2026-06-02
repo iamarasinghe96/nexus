@@ -51,13 +51,19 @@ export default function App() {
     })
   }, [])
 
-  // ─── Auto-switch to CITIZEN if user signs out ─────────────────────────────
+  // ─── Auto-switch to CITIZEN only when user actively signs OUT ───────────────
+  // (not when they merely click STAFF while unauthenticated — that would hide the sign-in button)
 
+  const prevUserRef = useRef<typeof user>(undefined)
   useEffect(() => {
-    if (!authLoading && !user && userType === 'COUNCIL_STAFF') {
+    if (authLoading) return
+    const wasLoggedIn = prevUserRef.current !== undefined && prevUserRef.current !== null
+    const nowLoggedOut = user === null
+    if (wasLoggedIn && nowLoggedOut && userType === 'COUNCIL_STAFF') {
       setUserType('CITIZEN')
       setQueryHighlightIds([])
     }
+    prevUserRef.current = user
   }, [user, authLoading, userType])
 
   // ─── Session logging on tab close ────────────────────────────────────────────
