@@ -1,11 +1,17 @@
 import { useState } from 'react'
 import NexusGraph from './components/NexusGraph'
 import NexusQuery from './components/NexusQuery'
+import NexusEditor from './components/NexusEditor'
+import rawGraph from './data/nexus-graph.json'
+import type { GraphData, UserType, PillarFilter } from './types/graph'
 
-type UserType = 'CITIZEN' | 'CONTRACTOR' | 'COUNCIL_STAFF'
-type PillarFilter = 'ALL' | 'WASTE' | 'CLIMATE'
+const initialGraph: GraphData = {
+  nodes: rawGraph.nodes as GraphData['nodes'],
+  edges: rawGraph.edges as GraphData['edges'],
+}
 
 export default function App() {
+  const [graphData, setGraphData] = useState<GraphData>(initialGraph)
   const [queryHighlightIds, setQueryHighlightIds] = useState<string[]>([])
   const [userType, setUserType] = useState<UserType>('COUNCIL_STAFF')
   const [pillarFilter, setPillarFilter] = useState<PillarFilter>('ALL')
@@ -16,9 +22,9 @@ export default function App() {
 
   return (
     <div className="w-screen h-screen overflow-hidden relative" style={{ background: '#0d2240' }}>
-      {/* Graph fills full screen */}
       <div className="w-full h-full">
         <NexusGraph
+          graphData={graphData}
           queryHighlightIds={queryHighlightIds}
           userType={userType}
           onUserTypeChange={handleUserTypeChange}
@@ -27,18 +33,25 @@ export default function App() {
         />
       </div>
 
-      {/* Title — centred, behind query bar */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 text-center pointer-events-none">
         <span className="text-xs font-mono tracking-widest" style={{ color: 'rgba(255,255,255,0.15)' }}>
           ALBURYCITY LEGISLATIVE INTELLIGENCE
         </span>
       </div>
 
-      {/* Query overlay — sits above graph, centred */}
       <NexusQuery
+        graphData={graphData}
         userType={userType}
         onHighlight={handleHighlight}
       />
+
+      {/* Edit mode only accessible to COUNCIL_STAFF */}
+      {userType === 'COUNCIL_STAFF' && (
+        <NexusEditor
+          graphData={graphData}
+          onGraphChange={setGraphData}
+        />
+      )}
     </div>
   )
 }

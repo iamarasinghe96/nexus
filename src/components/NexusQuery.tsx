@@ -1,9 +1,7 @@
 import { useState, useRef, useCallback, KeyboardEvent } from 'react'
-import rawGraph from '../data/nexus-graph.json'
+import type { GraphData, GraphNode, UserType } from '../types/graph'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-type UserType = 'CITIZEN' | 'CONTRACTOR' | 'COUNCIL_STAFF'
 
 interface GroqResponse {
   answer: string
@@ -13,26 +11,15 @@ interface GroqResponse {
   contradictions: string[]
 }
 
-interface GraphNode {
-  id: string
-  label: string
-  type: string
-  pillar: string
-  description: string
-  metadata: Record<string, unknown>
-  contradictions: string[]
-}
-
 interface NexusQueryProps {
+  graphData: GraphData
   userType: UserType
   onHighlight: (nodeIds: string[]) => void
 }
 
 // ─── Groq API ─────────────────────────────────────────────────────────────────
 
-// Condensed node context — keeps token count reasonable while retaining all lookupable fields
-function buildGraphContext(): string {
-  const nodes = rawGraph.nodes as GraphNode[]
+function buildGraphContext(nodes: GraphNode[]): string {
   return JSON.stringify(
     nodes.map(n => ({
       id: n.id,
@@ -47,8 +34,6 @@ function buildGraphContext(): string {
     0,
   )
 }
-
-const GRAPH_CONTEXT = buildGraphContext()
 
 const SYSTEM_PROMPT = `You are NEXUS, a legislative navigation assistant for AlburyCity Council. You have access to a knowledge graph of federal, state and council legislation, strategies, actions, forms and contacts across two pillars: Waste Recovery and Climate Change Adaptation.
 
@@ -70,6 +55,7 @@ Only include node IDs that exist in the graph context provided. Do not include n
 async function queryGroq(
   question: string,
   userType: UserType,
+  graphContext: string,
 ): Promise<GroqResponse> {
   const apiKey = import.meta.env.VITE_GROQ_API_KEY as string | undefined
   if (!apiKey) throw new Error('VITE_GROQ_API_KEY is not set')
@@ -90,7 +76,7 @@ async function queryGroq(
         { role: 'system', content: SYSTEM_PROMPT },
         {
           role: 'user',
-          content: `User type: ${userLabel}\n\nKnowledge graph nodes:\n${GRAPH_CONTEXT}\n\nQuestion: ${question}`,
+          content: `User type: ${userLabel}\n\nKnowledge graph nodes:\n${graphContext}\n\nQuestion: ${question}`,
         },
       ],
     }),
@@ -120,10 +106,6 @@ async function queryGroq(
 
 // ─── Lookup helpers ───────────────────────────────────────────────────────────
 
-function getNode(id: string): GraphNode | undefined {
-  return (rawGraph.nodes as GraphNode[]).find(n => n.id === id)
-}
-
 const EXAMPLE_QUERIES = [
   'Where do I apply for commercial waste disposal at AWMC?',
   'What legislation governs landfill gas capture at AWMC?',
@@ -134,7 +116,8 @@ const EXAMPLE_QUERIES = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function NexusQuery({ userType, onHighlight }: NexusQueryProps) {
+export default function NexusQuery({ graphData, userType, onHighlight }: NexusQueryProps) {
+  const getNode = (id: string): GraphNode | undefined => graphData.nodes.find(n => n.id === id)
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -150,7 +133,8 @@ export default function NexusQuery({ userType, onHighlight }: NexusQueryProps) {
     setResult(null)
     setOpen(true)
     try {
-      const res = await queryGroq(trimmed, userType)
+      const graphContext = buildGraphContext(graphData.nodes)
+      const res = await queryGroq(trimmed, userType, graphContext)
       setResult(res)
       // Merge all returned IDs for graph highlight
       const allIds = [
@@ -166,7 +150,7 @@ export default function NexusQuery({ userType, onHighlight }: NexusQueryProps) {
     } finally {
       setLoading(false)
     }
-  }, [userType, onHighlight])
+  }, [userType, onHighlight, graphData])
 
   const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') submit(query)

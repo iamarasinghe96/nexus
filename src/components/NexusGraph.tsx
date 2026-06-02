@@ -1,39 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import * as d3 from 'd3'
-import rawGraph from '../data/nexus-graph.json'
+import type { GraphData, NodeType, Pillar, Relationship, UserType, PillarFilter } from '../types/graph'
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-type NodeType =
-  | 'FEDERAL_LEG'
-  | 'STATE_LEG'
-  | 'STATE_STRATEGY'
-  | 'COUNCIL_STRATEGY'
-  | 'COUNCIL_ACTION'
-  | 'FORM'
-  | 'CONTACT'
-  | 'CONTRADICTION'
-
-type Pillar = 'WASTE' | 'CLIMATE' | 'BOTH'
-type Relationship = 'GOVERNED_BY' | 'IMPLEMENTS' | 'CONTRADICTS' | 'REQUIRES' | 'DELIVERS' | 'CONTACTS'
-type UserType = 'CITIZEN' | 'CONTRACTOR' | 'COUNCIL_STAFF'
-type PillarFilter = 'ALL' | 'WASTE' | 'CLIMATE'
-
-interface GraphNode {
-  id: string
-  label: string
-  type: NodeType
-  pillar: Pillar
-  description: string
-  metadata: Record<string, unknown>
-  contradictions: string[]
-}
-
-interface GraphEdge {
-  source: string
-  target: string
-  relationship: Relationship
-}
+// ─── Local simulation types ───────────────────────────────────────────────────
 
 interface SimNode extends d3.SimulationNodeDatum {
   id: string
@@ -58,6 +27,7 @@ interface SelectedNode {
 }
 
 export interface NexusGraphProps {
+  graphData: GraphData
   queryHighlightIds?: string[]
   userType: UserType
   onUserTypeChange: (u: UserType) => void
@@ -139,6 +109,7 @@ const SKIP_META_KEYS = new Set(['links'])
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function NexusGraph({
+  graphData,
   queryHighlightIds,
   userType,
   onUserTypeChange,
@@ -155,23 +126,21 @@ export default function NexusGraph({
   const emphasisRef = useRef<NodeType[]>(USER_EMPHASIS[userType])
 
   const visibleNodes = useCallback((): SimNode[] => {
-    const nodes = rawGraph.nodes as GraphNode[]
-    const edges = rawGraph.edges as GraphEdge[]
     const degreeMap = new Map<string, number>()
-    edges.forEach(e => {
+    graphData.edges.forEach(e => {
       degreeMap.set(e.source, (degreeMap.get(e.source) ?? 0) + 1)
       degreeMap.set(e.target, (degreeMap.get(e.target) ?? 0) + 1)
     })
-    return nodes
+    return graphData.nodes
       .filter(n => pillarFilter === 'ALL' || n.pillar === pillarFilter || n.pillar === 'BOTH')
       .map(n => ({ ...n, degree: degreeMap.get(n.id) ?? 0, x: undefined, y: undefined }))
-  }, [pillarFilter])
+  }, [pillarFilter, graphData])
 
   const visibleEdges = useCallback((nodeIds: Set<string>): SimLink[] => {
-    return (rawGraph.edges as GraphEdge[])
+    return graphData.edges
       .filter(e => nodeIds.has(e.source) && nodeIds.has(e.target))
       .map(e => ({ ...e, sourceId: e.source, targetId: e.target, source: e.source, target: e.target }))
-  }, [])
+  }, [graphData])
 
   // ─── Query highlight effect — runs when queryHighlightIds changes ─────────────
 
@@ -549,7 +518,7 @@ export default function NexusGraph({
               <div className="mb-4 p-3" style={{ background: 'rgba(226,75,74,0.1)', border: '1px solid rgba(226,75,74,0.4)' }}>
                 <div className="text-xs font-mono mb-2" style={{ color: '#E24B4A' }}>⚠ CONTRADICTIONS</div>
                 {selected.node.contradictions.map(cid => {
-                  const cn = rawGraph.nodes.find(n => n.id === cid)
+                  const cn = graphData.nodes.find(n => n.id === cid)
                   return cn ? (
                     <div key={cid} className="text-xs mb-1" style={{ color: 'rgba(226,75,74,0.85)' }}>{cn.label}</div>
                   ) : null
