@@ -30,9 +30,7 @@ export interface NexusGraphProps {
   graphData: GraphData
   queryHighlightIds?: string[]
   userType: UserType
-  onUserTypeChange: (u: UserType) => void
   pillarFilter: PillarFilter
-  onPillarFilterChange: (p: PillarFilter) => void
 }
 
 // ─── Design constants ─────────────────────────────────────────────────────────
@@ -112,9 +110,7 @@ export default function NexusGraph({
   graphData,
   queryHighlightIds,
   userType,
-  onUserTypeChange,
   pillarFilter,
-  onPillarFilterChange,
 }: NexusGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [selected, setSelected] = useState<SelectedNode | null>(null)
@@ -380,42 +376,6 @@ export default function NexusGraph({
 
   return (
     <div className="relative w-full h-full">
-      {/* Pillar toggle — top left */}
-      <div className="absolute top-4 left-4 z-10 flex gap-2">
-        {(['ALL', 'WASTE', 'CLIMATE'] as PillarFilter[]).map(p => (
-          <button
-            key={p}
-            onClick={() => onPillarFilterChange(p)}
-            className="px-3 py-1 text-xs font-mono tracking-widest border transition-colors"
-            style={{
-              background: pillarFilter === p ? 'rgba(29,158,117,0.25)' : 'rgba(13,34,64,0.8)',
-              borderColor: pillarFilter === p ? '#1D9E75' : 'rgba(255,255,255,0.15)',
-              color: pillarFilter === p ? '#5dcaa5' : 'rgba(255,255,255,0.5)',
-            }}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
-
-      {/* User type selector — top right */}
-      <div className="absolute top-4 right-4 z-10 flex gap-2">
-        {(['CITIZEN', 'CONTRACTOR', 'COUNCIL_STAFF'] as UserType[]).map(u => (
-          <button
-            key={u}
-            onClick={() => onUserTypeChange(u)}
-            className="px-3 py-1 text-xs font-mono tracking-widest border transition-colors"
-            style={{
-              background: userType === u ? 'rgba(250,199,117,0.15)' : 'rgba(13,34,64,0.8)',
-              borderColor: userType === u ? '#fac775' : 'rgba(255,255,255,0.15)',
-              color: userType === u ? '#fac775' : 'rgba(255,255,255,0.5)',
-            }}
-          >
-            {u === 'COUNCIL_STAFF' ? 'STAFF' : u}
-          </button>
-        ))}
-      </div>
-
       {/* Legend — bottom left */}
       <div className="absolute bottom-4 left-4 z-10 text-xs font-mono">
         {(Object.entries(NODE_COLOUR) as [NodeType, string][]).map(([type, colour]) => (

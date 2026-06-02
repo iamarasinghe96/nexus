@@ -144,10 +144,44 @@ export default function App() {
           graphData={graphData}
           queryHighlightIds={queryHighlightIds}
           userType={userType}
-          onUserTypeChange={handleUserTypeChange}
           pillarFilter={pillarFilter}
-          onPillarFilterChange={handlePillarFilterChange}
         />
+      </div>
+
+      {/* Pillar toggle — top left, z-40 so it's above query bar */}
+      <div className="absolute top-4 left-4 z-40 flex gap-2">
+        {(['ALL', 'WASTE', 'CLIMATE'] as PillarFilter[]).map(p => (
+          <button
+            key={p}
+            onClick={() => handlePillarFilterChange(p)}
+            className="px-3 py-1 text-xs font-mono tracking-widest border transition-colors"
+            style={{
+              background: pillarFilter === p ? 'rgba(29,158,117,0.25)' : 'rgba(13,34,64,0.8)',
+              borderColor: pillarFilter === p ? '#1D9E75' : 'rgba(255,255,255,0.15)',
+              color: pillarFilter === p ? '#5dcaa5' : 'rgba(255,255,255,0.5)',
+            }}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+
+      {/* User type selector — top right, z-40 so it's above query bar */}
+      <div className="absolute top-4 right-4 z-40 flex gap-2">
+        {(['CITIZEN', 'CONTRACTOR', 'COUNCIL_STAFF'] as UserType[]).map(u => (
+          <button
+            key={u}
+            onClick={() => handleUserTypeChange(u)}
+            className="px-3 py-1 text-xs font-mono tracking-widest border transition-colors"
+            style={{
+              background: userType === u ? 'rgba(250,199,117,0.15)' : 'rgba(13,34,64,0.8)',
+              borderColor: userType === u ? '#fac775' : 'rgba(255,255,255,0.15)',
+              color: userType === u ? '#fac775' : 'rgba(255,255,255,0.5)',
+            }}
+          >
+            {u === 'COUNCIL_STAFF' ? 'STAFF' : u}
+          </button>
+        ))}
       </div>
 
       {/* Firestore status indicator — bottom right, above legend */}
