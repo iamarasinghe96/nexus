@@ -1,0 +1,768 @@
+{
+  "nodes": [
+    {
+      "id": "fed-nger",
+      "label": "National Greenhouse and Energy Reporting Act",
+      "type": "FEDERAL_LEG",
+      "pillar": "BOTH",
+      "description": "Establishes a national framework for reporting greenhouse gas emissions and energy production and consumption. AlburyCity must submit annual NGER reports for facilities meeting threshold criteria including AWMC.",
+      "metadata": {
+        "shortName": "NGER Act",
+        "jurisdiction": "Commonwealth",
+        "year": 2007,
+        "reportingThreshold": "25,000 tCO2-e per facility or 50,000 tCO2-e corporate",
+        "regulatoryBody": "Clean Energy Regulator",
+        "links": ["https://www.legislation.gov.au/Series/C2007A00175"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "fed-product-stewardship",
+      "label": "Product Stewardship Act 2011",
+      "type": "FEDERAL_LEG",
+      "pillar": "WASTE",
+      "description": "Provides a framework for shared responsibility across the product lifecycle, including voluntary, co-regulatory and mandatory stewardship schemes. Relevant to e-waste, tyres, packaging and other priority products accepted at AWMC.",
+      "metadata": {
+        "shortName": "Product Stewardship Act",
+        "jurisdiction": "Commonwealth",
+        "year": 2011,
+        "relevantSchemes": ["MobileMuster", "TechCollect", "Tyre Stewardship Australia"],
+        "links": ["https://www.legislation.gov.au/Series/C2011A00076"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "fed-export-waste-ban",
+      "label": "Export Waste Ban",
+      "type": "FEDERAL_LEG",
+      "pillar": "WASTE",
+      "description": "Commonwealth ban effective 1 July 2021 prohibiting export of waste glass, paper/cardboard, plastics and tyres. Drives domestic reprocessing infrastructure demand including facilities like C&D MRF and IVC.",
+      "metadata": {
+        "shortName": "Export Waste Ban",
+        "jurisdiction": "Commonwealth",
+        "effectiveDate": "2021-07-01",
+        "materials": ["glass", "paper/cardboard", "plastics", "tyres"],
+        "enforcingBody": "Department of Climate Change, Energy, the Environment and Water"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "fed-epbc",
+      "label": "Environment Protection and Biodiversity Conservation Act 1999",
+      "type": "FEDERAL_LEG",
+      "pillar": "CLIMATE",
+      "description": "Australia's principal environmental legislation protecting matters of national environmental significance including threatened species and ecological communities. Relevant to new landfill site development and major infrastructure projects near sensitive habitats.",
+      "metadata": {
+        "shortName": "EPBC Act",
+        "jurisdiction": "Commonwealth",
+        "year": 1999,
+        "triggerThreshold": "Actions with significant impact on MNES require federal approval",
+        "regulatoryBody": "Department of Climate Change, Energy, the Environment and Water",
+        "links": ["https://www.legislation.gov.au/Series/C2004A00485"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "fed-climate-active",
+      "label": "Climate Active Framework",
+      "type": "FEDERAL_LEG",
+      "pillar": "CLIMATE",
+      "description": "Australian Government voluntary certification program for organisations achieving net zero emissions. Council participation would require certified carbon neutral status across Scope 1, 2 and 3 emissions.",
+      "metadata": {
+        "shortName": "Climate Active",
+        "jurisdiction": "Commonwealth",
+        "administrator": "Department of Climate Change, Energy, the Environment and Water",
+        "certificationTypes": ["Organisation", "Product", "Service", "Building", "Precinct", "Event"]
+      },
+      "contradictions": ["contradiction-scope3-gap"]
+    },
+    {
+      "id": "state-poeo",
+      "label": "Protection of the Environment Operations Act 1997",
+      "type": "STATE_LEG",
+      "pillar": "WASTE",
+      "description": "NSW principal environment protection legislation establishing the licensing system for scheduled activities including landfill operations. AWMC operates under an Environment Protection Licence (EPL) issued under this Act.",
+      "metadata": {
+        "shortName": "POEO Act",
+        "jurisdiction": "NSW",
+        "year": 1997,
+        "scheduledActivity": "Waste disposal (Schedule 1, clause 39)",
+        "regulatoryBody": "NSW Environment Protection Authority",
+        "links": ["https://legislation.nsw.gov.au/view/html/inforce/current/act-1997-156"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "state-wasm",
+      "label": "NSW Waste and Sustainable Materials Strategy 2041",
+      "type": "STATE_STRATEGY",
+      "pillar": "WASTE",
+      "description": "NSW long-term strategy setting targets to halve waste to landfill by 2030, achieve 80% recovery of all materials and transition to a circular economy. AlburyCity's 80% diversion target by 2030 aligns with this state framework.",
+      "metadata": {
+        "shortName": "WaSM 2041",
+        "jurisdiction": "NSW",
+        "publishedYear": 2021,
+        "keyTargets": {
+          "2030": "Halve waste to landfill, 80% recovery rate",
+          "2041": "Circular economy transition"
+        },
+        "administrator": "NSW EPA"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "state-plastic-reduction",
+      "label": "Plastic Reduction and Circular Economy Act",
+      "type": "STATE_LEG",
+      "pillar": "WASTE",
+      "description": "NSW legislation phasing out problematic single-use plastics and establishing circular economy principles. Affects AWMC waste stream composition and downstream reprocessing obligations.",
+      "metadata": {
+        "shortName": "Plastic Reduction Act",
+        "jurisdiction": "NSW",
+        "year": 2021,
+        "phase1BanDate": "2022-06-01",
+        "bannedItems": ["plastic bags", "straws", "cutlery", "stirrers", "polystyrene food containers"],
+        "regulatoryBody": "NSW EPA"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "state-biodiversity",
+      "label": "Biodiversity Conservation Act 2016",
+      "type": "STATE_LEG",
+      "pillar": "BOTH",
+      "description": "NSW legislation for biodiversity conservation establishing the Biodiversity Offsets Scheme. Any new landfill site development or major infrastructure expansion must assess biodiversity impacts and may require offsets.",
+      "metadata": {
+        "shortName": "BC Act 2016",
+        "jurisdiction": "NSW",
+        "year": 2016,
+        "offsetScheme": "Biodiversity Offsets Scheme (BOS)",
+        "regulatoryBody": "NSW Biodiversity Conservation Trust / DCCEEW"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "state-lls",
+      "label": "Local Land Services Act 2013",
+      "type": "STATE_LEG",
+      "pillar": "CLIMATE",
+      "description": "NSW legislation governing land management across rural areas including native vegetation management and land clearing approvals. Relevant to council landholdings used for climate adaptation actions such as revegetation or carbon sequestration.",
+      "metadata": {
+        "shortName": "LLS Act",
+        "jurisdiction": "NSW",
+        "year": 2013,
+        "regulatoryBody": "Local Land Services NSW"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "state-climate-netzero",
+      "label": "NSW Climate Change (Net Zero Future) Act 2022",
+      "type": "STATE_LEG",
+      "pillar": "CLIMATE",
+      "description": "NSW legislation enshrining net zero emissions by 2050 and 70% reduction by 2035 relative to 2005 levels. AlburyCity's corporate targets must be consistent with and report against this state framework.",
+      "metadata": {
+        "shortName": "Net Zero Future Act",
+        "jurisdiction": "NSW",
+        "year": 2022,
+        "targets": {
+          "2035": "70% reduction from 2005 baseline",
+          "2050": "Net zero"
+        },
+        "regulatoryBody": "NSW DCCEEW"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "state-climate-adaptation",
+      "label": "NSW Climate Change Adaptation Strategy",
+      "type": "STATE_STRATEGY",
+      "pillar": "CLIMATE",
+      "description": "NSW whole-of-government strategy for managing climate risks across communities, economy and environment. Provides the state framework within which AlburyCity's local Climate Change Adaptation Strategy must be situated.",
+      "metadata": {
+        "shortName": "NSW CAS",
+        "jurisdiction": "NSW",
+        "administrator": "NSW DCCEEW",
+        "focusAreas": ["communities", "economy", "environment", "infrastructure", "health"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "council-wms",
+      "label": "AlburyCity Waste Management Strategy 2022-2027",
+      "type": "COUNCIL_STRATEGY",
+      "pillar": "WASTE",
+      "description": "AlburyCity's five-year operational strategy covering AWMC landfill management, diversion targets, infrastructure pipeline (IVC, MBT, C&D MRF) and 54 actions across four strategic themes. Current diversion rate ~62-63%, target 80% by 2030.",
+      "metadata": {
+        "shortName": "WMS 2023",
+        "jurisdiction": "AlburyCity",
+        "period": "2022-2027",
+        "totalActions": 54,
+        "strategicThemes": 4,
+        "diversionRateCurrent": "62-63%",
+        "diversionRateTarget2030": "80%",
+        "awmcSouthernValleyLifeMin": "18 years",
+        "awmcSouthernValleyLifeMax": "34 years",
+        "newSiteDevelopmentDeadline": "2033 (minimum life scenario)",
+        "newSiteLeadTime": "5.5 years minimum (Table 10-2)",
+        "residualWaste": "11,251t pa",
+        "residualWasteDiversion": "0%"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "council-ramjo",
+      "label": "RAMJO Regional Resource Recovery Strategy 2022-2027",
+      "type": "COUNCIL_STRATEGY",
+      "pillar": "WASTE",
+      "description": "Regional strategy coordinated by Riverina and Murray Joint Organisation covering shared waste infrastructure and resource recovery across member councils including AlburyCity. Informs regional-scale solutions for materials the single-council approach cannot economically support.",
+      "metadata": {
+        "shortName": "RAMJO RRRS",
+        "jurisdiction": "RAMJO region",
+        "period": "2022-2027",
+        "administrator": "RAMJO",
+        "memberCouncils": ["AlburyCity", "Wagga Wagga", "Federation", "Berrigan", "Murray River", "Murrumbidgee", "Lockhart", "Greater Hume"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "council-esfap",
+      "label": "Environmental Sustainability Framework and Action Plan 2024",
+      "type": "COUNCIL_STRATEGY",
+      "pillar": "CLIMATE",
+      "description": "AlburyCity's overarching sustainability framework adopted March 2024 setting corporate emission reduction targets and 54+ actions across energy, transport, waste and natural environment. LSO 2.1 commits to Scope 3 inclusion in future carbon targets.",
+      "metadata": {
+        "shortName": "ESFAP 2024",
+        "jurisdiction": "AlburyCity",
+        "adoptedDate": "2024-03",
+        "targets": {
+          "2025": "40% reduction excl. waste, 100% renewable electricity",
+          "2030": "80% reduction excl. waste",
+          "2040": "Net zero incl. LGA waste",
+          "2050": "Absolute net zero all waste"
+        },
+        "baselineYear": "2018/19",
+        "scope3Commitment": "LSO 2.1 — inclusion in future targets",
+        "relevantAction": "LSO 2.1"
+      },
+      "contradictions": ["contradiction-scope3-gap"]
+    },
+    {
+      "id": "council-ccas",
+      "label": "Climate Change Adaptation Strategy 2021-2025",
+      "type": "COUNCIL_STRATEGY",
+      "pillar": "CLIMATE",
+      "description": "AlburyCity's current adaptation strategy covering flood, storm, heatwave and fire risk management. Does not reflect obligations arising from Council's climate emergency declaration of March 2022, which post-dates adoption.",
+      "metadata": {
+        "shortName": "CCAS 2021-2025",
+        "jurisdiction": "AlburyCity",
+        "period": "2021-2025",
+        "adoptedDate": "2021",
+        "climateEmergencyDeclared": "2022-03",
+        "hazardsCovered": ["flood", "storm", "heatwave", "fire"]
+      },
+      "contradictions": ["contradiction-ccas-predates-declaration"]
+    },
+    {
+      "id": "council-fleet",
+      "label": "Net Zero Fleet Transition Plan 2022",
+      "type": "COUNCIL_STRATEGY",
+      "pillar": "CLIMATE",
+      "description": "AlburyCity plan for transitioning the corporate vehicle and plant fleet to low and zero emission alternatives. Fleet decarbonisation is a key Scope 1 lever under ESFAP targets.",
+      "metadata": {
+        "shortName": "Fleet Transition Plan",
+        "jurisdiction": "AlburyCity",
+        "year": 2022,
+        "fleetScope": "Corporate light vehicles and heavy plant",
+        "targetFuelTypes": ["BEV", "HEV", "hydrogen (long-term)"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "council-albury2050",
+      "label": "Towards Albury 2050",
+      "type": "COUNCIL_STRATEGY",
+      "pillar": "BOTH",
+      "description": "AlburyCity's Community Strategic Plan adopted March 2025, the highest-order planning document setting long-term community vision across liveability, sustainability and economic development. All operational strategies must align to this plan.",
+      "metadata": {
+        "shortName": "Towards Albury 2050",
+        "jurisdiction": "AlburyCity",
+        "adoptedDate": "2025-03",
+        "planningHorizon": 2050,
+        "legislativeRequirement": "Local Government Act 1993 (NSW)"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-fogo",
+      "label": "FOGO Kerbside Program",
+      "type": "COUNCIL_ACTION",
+      "pillar": "WASTE",
+      "description": "Food organics and garden organics kerbside collection operational since 2015, diverting organic waste from the Southern Valley putrescible cell. Diversion rate has stalled at ~62-63% since launch, requiring IVC or MBT to unlock further gains.",
+      "metadata": {
+        "operationalSince": 2015,
+        "diversionContribution": "Primary organics diversion mechanism",
+        "processingDestination": "External composting facility (current)",
+        "proposedUpgrade": "IVC — in-vessel composting on-site",
+        "annualTonnage": "Estimated 7,000-9,000t organics diverted"
+      },
+      "contradictions": ["contradiction-epa-composting-rejection"]
+    },
+    {
+      "id": "action-cd-mrf",
+      "label": "C&D Materials Recovery Facility",
+      "type": "COUNCIL_ACTION",
+      "pillar": "WASTE",
+      "description": "Construction and demolition waste materials recovery facility under construction at AWMC at time of WMS (June 2023). Targets recovery of concrete, timber, steel and mixed C&D materials currently going to landfill.",
+      "metadata": {
+        "shortName": "C&D MRF",
+        "status": "Under construction (June 2023)",
+        "location": "AWMC site",
+        "targetMaterials": ["concrete", "timber", "steel", "mixed C&D"],
+        "expectedDiversionContribution": "Significant — C&D residual is major landfill volume contributor"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-ivc",
+      "label": "In-Vessel Composting Facility (IVC)",
+      "type": "COUNCIL_ACTION",
+      "pillar": "WASTE",
+      "description": "Proposed on-site IVC facility to process FOGO and green waste at AWMC, estimated $19.5M capital cost with NPV benefit of $136.8M over 25 years. Siting is subject to EPA regulatory pathway noting previous 2009-2010 EIS rejection for on-site composting.",
+      "metadata": {
+        "shortName": "IVC",
+        "status": "Proposed",
+        "capitalCost": "$19.5M",
+        "npvBenefit": "$136.8M over 25 years",
+        "constructionPeriod": "TBC",
+        "sitingConstraint": "Previous EPA rejection of composting EIS 2009-2010",
+        "location": "AWMC site (proposed)"
+      },
+      "contradictions": ["contradiction-epa-composting-rejection"]
+    },
+    {
+      "id": "action-mbt",
+      "label": "Mechanical Biological Treatment Facility (MBT)",
+      "type": "COUNCIL_ACTION",
+      "pillar": "WASTE",
+      "description": "Proposed MBT facility to process residual waste and extract recyclables prior to landfilling, estimated $18.8M capital with 2-year construction period. Would address the 11,251t pa residual waste stream currently achieving 0% diversion.",
+      "metadata": {
+        "shortName": "MBT",
+        "status": "Proposed",
+        "capitalCost": "$18.8M",
+        "constructionPeriod": "2 years",
+        "targetWasteStream": "Residual waste — 11,251t pa at 0% diversion",
+        "location": "AWMC site (proposed)"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-biogas",
+      "label": "Biogas Generator PPP — LMS Energy",
+      "type": "COUNCIL_ACTION",
+      "pillar": "BOTH",
+      "description": "1.1MW landfill gas-to-energy generator operated by LMS Energy under a public-private partnership, operational since October 2009. Co-located with 1.5MW solar on the capped cell using the same PPP infrastructure.",
+      "metadata": {
+        "capacity": "1.1MW",
+        "operator": "LMS Energy",
+        "operationalSince": "2009-10",
+        "arrangement": "PPP",
+        "coLocatedSolar": "1.5MW on capped cell",
+        "emissionsAbatement": "Landfill gas destruction — counts toward Scope 1 reduction",
+        "location": "AWMC Southern Valley"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-compaction",
+      "label": "Compaction Improvement Program",
+      "type": "COUNCIL_ACTION",
+      "pillar": "WASTE",
+      "description": "Operational program to improve waste compaction rates in the Southern Valley putrescible cell to extend usable life toward the 34-year maximum scenario. Directly affects the 2033 trigger date for commencing new site development.",
+      "metadata": {
+        "cellLifeMinimum": "18 years",
+        "cellLifeMaximum": "34 years",
+        "newSiteDeadline": "2033 (minimum life scenario)",
+        "newSiteLeadTime": "5.5 years minimum",
+        "impactOnLifeExtension": "Improved compaction extends toward maximum life scenario"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-filling-plan",
+      "label": "Comprehensive Filling Plan Development",
+      "type": "COUNCIL_ACTION",
+      "pillar": "WASTE",
+      "description": "Development of a comprehensive airspace filling plan for AWMC to optimise cell life and inform the timing of new site development. Required under WMS 2023 to manage the 18-34 year life uncertainty of the Southern Valley cell.",
+      "metadata": {
+        "status": "Proposed — WMS 2023 action",
+        "purpose": "Optimise airspace use and define new site development trigger date",
+        "linkedDeadline": "New site development must begin by 2033 (minimum life scenario)"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-ppa",
+      "label": "100% Renewable Electricity PPA",
+      "type": "COUNCIL_ACTION",
+      "pillar": "CLIMATE",
+      "description": "Power Purchase Agreement for 100% renewable electricity supply to all council facilities from 1 January 2023. Delivers the 2025 renewable electricity target under ESFAP and eliminates Scope 2 market-based emissions.",
+      "metadata": {
+        "effectiveDate": "2023-01-01",
+        "scope": "All council facilities",
+        "emissionsImpact": "Scope 2 (market-based) — eliminated",
+        "alignsWithTarget": "ESFAP 2025 target — 100% renewable electricity"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-building-solar",
+      "label": "Council Building Solar — 575kW",
+      "type": "COUNCIL_ACTION",
+      "pillar": "CLIMATE",
+      "description": "575kW of rooftop solar installed across 18 council facilities, reducing Scope 2 location-based emissions and energy costs. Forms part of the renewable energy generation portfolio alongside the AWMC PPP solar.",
+      "metadata": {
+        "capacity": "575kW",
+        "facilities": 18,
+        "emissionsImpact": "Scope 2 location-based reduction",
+        "combinedGenerationPortfolio": "575kW buildings + 1.5MW AWMC capped cell + 1.1MW biogas"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-energy-framework",
+      "label": "Energy Management Framework",
+      "type": "COUNCIL_ACTION",
+      "pillar": "CLIMATE",
+      "description": "Proposed organisational framework to systematically manage and reduce corporate energy consumption across all council operations. Would establish monitoring, reporting and accountability for energy performance toward ESFAP targets.",
+      "metadata": {
+        "status": "Proposed",
+        "purpose": "Systematic energy management and accountability",
+        "linkedStrategy": "ESFAP 2024"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-carbon-kpi",
+      "label": "Carbon KPI Cascade",
+      "type": "COUNCIL_ACTION",
+      "pillar": "CLIMATE",
+      "description": "Proposed cascade of carbon reduction KPIs embedded into business unit performance frameworks across council. Would operationalise ESFAP targets at department level and drive accountability for emission reductions.",
+      "metadata": {
+        "status": "Proposed",
+        "purpose": "Embed carbon accountability in operational management",
+        "linkedStrategy": "ESFAP 2024"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "action-emergency-preparedness",
+      "label": "Emergency Preparedness — Climate Hazards",
+      "type": "COUNCIL_ACTION",
+      "pillar": "CLIMATE",
+      "description": "Council actions addressing preparedness for flood, storm, heatwave and fire events as identified in CCAS 2021-2025. These actions are constrained by the strategy's pre-emergency-declaration baseline and require updating.",
+      "metadata": {
+        "hazards": ["flood", "storm", "heatwave", "fire"],
+        "linkedStrategy": "CCAS 2021-2025",
+        "constraintNote": "Strategy predates March 2022 climate emergency declaration"
+      },
+      "contradictions": ["contradiction-ccas-predates-declaration"]
+    },
+    {
+      "id": "form-awmc-gate",
+      "label": "Commercial Waste Gate Application (AWMC)",
+      "type": "FORM",
+      "pillar": "WASTE",
+      "description": "Application form for commercial operators seeking access to AWMC for waste disposal or resource recovery services. Required for businesses disposing of scheduled wastes or accessing tipping services above residential rates.",
+      "metadata": {
+        "issuingBody": "AlburyCity — Resource Recovery Team",
+        "applicableTo": "Commercial waste generators and contractors",
+        "processingTime": "Contact Resource Recovery Team"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "form-epl-variation",
+      "label": "Environment Protection Licence Variation",
+      "type": "FORM",
+      "pillar": "WASTE",
+      "description": "NSW EPA application pathway for varying an existing Environment Protection Licence to authorise changed or new scheduled activities at AWMC. Required for any new waste processing infrastructure (IVC, MBT) added to the site.",
+      "metadata": {
+        "issuingBody": "NSW Environment Protection Authority",
+        "applicableTo": "Existing EPL holders seeking to change licensed activities",
+        "processingTime": "Typically 60-90 days",
+        "relevantForActions": ["action-ivc", "action-mbt", "action-cd-mrf"],
+        "regulatoryBase": "POEO Act 1997"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "form-da-new-cell",
+      "label": "Development Application — New Landfill Cell",
+      "type": "FORM",
+      "pillar": "WASTE",
+      "description": "AlburyCity Planning development application pathway for new landfill cell construction at AWMC. Given 5.5-year minimum lead time, any application for a new cell triggered by the 2033 deadline must be lodged by approximately 2027.",
+      "metadata": {
+        "issuingBody": "AlburyCity Planning",
+        "applicableTo": "AlburyCity (as landowner and operator)",
+        "criticalDeadline": "Lodge by ~2027 to meet 2033 site development start",
+        "leadTime": "5.5 years minimum (Table 10-2, WMS 2023)",
+        "relatedApprovals": ["EPL variation", "EPBC assessment if MNES triggered", "Biodiversity assessment"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "form-nger-report",
+      "label": "NGER Annual Reporting Submission",
+      "type": "FORM",
+      "pillar": "CLIMATE",
+      "description": "Annual greenhouse gas and energy reporting submission to the Clean Energy Regulator under the NGER Act. AlburyCity submits for AWMC and any other facilities meeting the threshold, with data informing ESFAP progress reporting.",
+      "metadata": {
+        "issuingBody": "Clean Energy Regulator",
+        "submissionDeadline": "31 October each year",
+        "reportingPeriod": "1 July to 30 June",
+        "submissionPortal": "OSCAR (Online System for Comprehensive Activity Reporting)"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "form-cpp-pledge",
+      "label": "Cities Power Partnership Pledge Reporting",
+      "type": "FORM",
+      "pillar": "CLIMATE",
+      "description": "Annual pledge reporting to the Cities Power Partnership (CPP) on progress against the council's CPP commitments across renewable energy, energy efficiency, sustainable transport and advocacy. Publicly reported.",
+      "metadata": {
+        "issuingBody": "Cities Power Partnership (Climate Council)",
+        "reportingFrequency": "Annual",
+        "pledgeCategories": ["renewable energy", "energy efficiency", "sustainable transport", "advocacy"]
+      },
+      "contradictions": []
+    },
+    {
+      "id": "form-budget-climate",
+      "label": "Council Budget Submission — Climate Actions",
+      "type": "FORM",
+      "pillar": "CLIMATE",
+      "description": "Internal council budget submission process for climate action capital and operating expenditure, including ESFAP actions, fleet transition and energy efficiency upgrades. Submissions compete through the annual Integrated Planning and Reporting cycle.",
+      "metadata": {
+        "issuingBody": "AlburyCity Finance",
+        "cycle": "Annual — Integrated Planning and Reporting",
+        "legislativeBase": "Local Government Act 1993 (NSW) — IP&R framework"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contact-resource-recovery",
+      "label": "Resource Recovery Team — AWMC",
+      "type": "CONTACT",
+      "pillar": "WASTE",
+      "description": "AlburyCity's operational team responsible for the Albury Waste Management Centre including landfill operations, resource recovery, contractor management and EPL compliance. Primary contact for commercial waste access and gate applications.",
+      "metadata": {
+        "organisation": "AlburyCity Council",
+        "cluster": "Infrastructure and Environment",
+        "responsibilities": ["AWMC operations", "EPL compliance", "contractor liaison", "diversion reporting"],
+        "phone": "02 6023 8111",
+        "website": "https://www.alburycity.nsw.gov.au"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contact-nsw-epa",
+      "label": "NSW Environment Protection Authority",
+      "type": "CONTACT",
+      "pillar": "BOTH",
+      "description": "NSW EPA is the regulatory body responsible for issuing and enforcing Environment Protection Licences under the POEO Act, administering the NSW waste levy, and regulating scheduled waste facilities including AWMC.",
+      "metadata": {
+        "organisation": "NSW Environment Protection Authority",
+        "jurisdiction": "NSW",
+        "relevantFunctions": ["EPL issuance and variation", "waste levy administration", "scheduled premises audit", "pollution incident response"],
+        "phone": "131 555",
+        "website": "https://www.epa.nsw.gov.au"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contact-planning",
+      "label": "AlburyCity Planning — Development Applications",
+      "type": "CONTACT",
+      "pillar": "WASTE",
+      "description": "AlburyCity Planning team responsible for processing development applications including infrastructure at AWMC. Critical contact for new landfill cell, IVC and MBT development approvals.",
+      "metadata": {
+        "organisation": "AlburyCity Council",
+        "cluster": "Planning and Development",
+        "responsibilities": ["DA lodgement and assessment", "pre-DA consultation", "environmental impact assessment"],
+        "phone": "02 6023 8111"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contact-sustainability",
+      "label": "Assets Sustainability and Environment Cluster",
+      "type": "CONTACT",
+      "pillar": "CLIMATE",
+      "description": "AlburyCity cluster responsible for sustainability strategy, ESFAP implementation, carbon reporting and climate change adaptation. Primary internal contact for climate-related queries and NGER reporting.",
+      "metadata": {
+        "organisation": "AlburyCity Council",
+        "cluster": "Assets, Sustainability and Environment",
+        "responsibilities": ["ESFAP implementation", "carbon accounting", "NGER reporting", "climate adaptation", "PPA management"],
+        "phone": "02 6023 8111"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contact-cpp",
+      "label": "Cities Power Partnership Secretariat",
+      "type": "CONTACT",
+      "pillar": "CLIMATE",
+      "description": "Secretariat for the Cities Power Partnership, a national network of councils committed to clean energy transition. AlburyCity reports annually to CPP and can access peer support, resources and advocacy through this network.",
+      "metadata": {
+        "organisation": "Cities Power Partnership / Climate Council",
+        "relevantFunctions": ["pledge reporting support", "peer network", "advocacy campaigns", "recognition"],
+        "website": "https://citiespowerpartnership.org.au"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contact-ramjo",
+      "label": "RAMJO — Riverina Murray Joint Organisation",
+      "type": "CONTACT",
+      "pillar": "WASTE",
+      "description": "Regional Joint Organisation coordinating shared services and strategy across member councils including AlburyCity. Administers the Regional Resource Recovery Strategy and facilitates collaborative waste infrastructure solutions.",
+      "metadata": {
+        "organisation": "Riverina and Murray Joint Organisation",
+        "relevantFunctions": ["RRRS administration", "regional waste collaboration", "shared infrastructure planning"],
+        "website": "https://www.ramjo.nsw.gov.au"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contradiction-efw-nsw",
+      "label": "Energy from Waste — NSW Policy Barrier",
+      "type": "CONTRADICTION",
+      "pillar": "WASTE",
+      "description": "Energy from Waste (EfW) incineration is not viable in NSW due to state policy position and insufficient waste volumes at AlburyCity scale. Any future EfW project proposal would conflict directly with NSW Government policy and the waste hierarchy prioritising resource recovery over energy recovery.",
+      "metadata": {
+        "type": "Policy conflict",
+        "affectedAction": "Any proposed EfW project",
+        "conflictingPolicy": "NSW EPA — EfW policy position",
+        "conflictingScale": "AlburyCity waste volume insufficient for economically viable EfW",
+        "severity": "HIGH",
+        "resolution": "Pursue IVC, MBT and circular economy alternatives"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contradiction-epa-composting-rejection",
+      "label": "Previous EPA Rejection — On-site Composting EIS",
+      "type": "CONTRADICTION",
+      "pillar": "WASTE",
+      "description": "NSW EPA rejected an EIS for on-site composting at AWMC in 2009-2010. This historical decision creates a regulatory precedent and siting constraint that affects the approval pathway for the proposed IVC facility at the same location.",
+      "metadata": {
+        "type": "Regulatory precedent",
+        "affectedAction": "action-ivc",
+        "rejectionDate": "2009-2010",
+        "regulatoryBody": "NSW EPA",
+        "severity": "MEDIUM",
+        "resolution": "Pre-DA EPA consultation required; updated EIS with contemporary assessment methodology",
+        "note": "Changed regulatory and technology context since 2009 may support different outcome"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contradiction-ccas-predates-declaration",
+      "label": "CCAS Predates Climate Emergency Declaration",
+      "type": "CONTRADICTION",
+      "pillar": "CLIMATE",
+      "description": "The Climate Change Adaptation Strategy 2021-2025 was adopted prior to AlburyCity's climate emergency declaration of March 2022 and does not reflect the heightened obligations and urgency that declaration implies. The strategy's risk assessments, action timelines and ambition level have not been revised to reflect post-declaration expectations.",
+      "metadata": {
+        "type": "Strategic misalignment",
+        "affectedStrategy": "council-ccas",
+        "declarationDate": "2022-03",
+        "strategyAdoptionDate": "2021",
+        "severity": "HIGH",
+        "resolution": "CCAS review required — align with emergency declaration obligations and updated IPCC AR6 risk data"
+      },
+      "contradictions": []
+    },
+    {
+      "id": "contradiction-scope3-gap",
+      "label": "Scope 3 Exclusion from Corporate Carbon Targets",
+      "type": "CONTRADICTION",
+      "pillar": "CLIMATE",
+      "description": "ESFAP LSO 2.1 commits to including Scope 3 emissions in future corporate carbon targets, but current reporting excludes Scope 3 entirely. This gap conflicts with Climate Active certification requirements and creates underreporting of AlburyCity's true carbon impact, particularly from procurement and contractor emissions.",
+      "metadata": {
+        "type": "Reporting gap",
+        "affectedStrategy": "council-esfap",
+        "affectedAction": "ESFAP LSO 2.1",
+        "conflictingFramework": "Climate Active — requires Scope 1, 2 and 3 for organisation certification",
+        "severity": "MEDIUM",
+        "resolution": "Scope 3 inventory development required — prioritise high-spend procurement categories"
+      },
+      "contradictions": []
+    }
+  ],
+  "edges": [
+    { "source": "state-poeo", "target": "fed-nger", "relationship": "GOVERNED_BY" },
+    { "source": "state-wasm", "target": "fed-export-waste-ban", "relationship": "GOVERNED_BY" },
+    { "source": "state-wasm", "target": "fed-product-stewardship", "relationship": "GOVERNED_BY" },
+    { "source": "state-plastic-reduction", "target": "fed-export-waste-ban", "relationship": "GOVERNED_BY" },
+    { "source": "state-biodiversity", "target": "fed-epbc", "relationship": "GOVERNED_BY" },
+    { "source": "state-climate-netzero", "target": "fed-nger", "relationship": "GOVERNED_BY" },
+    { "source": "state-climate-adaptation", "target": "state-climate-netzero", "relationship": "GOVERNED_BY" },
+    { "source": "council-wms", "target": "state-poeo", "relationship": "GOVERNED_BY" },
+    { "source": "council-wms", "target": "state-wasm", "relationship": "GOVERNED_BY" },
+    { "source": "council-ramjo", "target": "state-wasm", "relationship": "GOVERNED_BY" },
+    { "source": "council-esfap", "target": "state-climate-netzero", "relationship": "GOVERNED_BY" },
+    { "source": "council-ccas", "target": "state-climate-adaptation", "relationship": "GOVERNED_BY" },
+    { "source": "council-fleet", "target": "council-esfap", "relationship": "GOVERNED_BY" },
+    { "source": "council-albury2050", "target": "state-climate-netzero", "relationship": "GOVERNED_BY" },
+    { "source": "action-fogo", "target": "council-wms", "relationship": "IMPLEMENTS" },
+    { "source": "action-cd-mrf", "target": "council-wms", "relationship": "IMPLEMENTS" },
+    { "source": "action-ivc", "target": "council-wms", "relationship": "IMPLEMENTS" },
+    { "source": "action-mbt", "target": "council-wms", "relationship": "IMPLEMENTS" },
+    { "source": "action-biogas", "target": "council-wms", "relationship": "IMPLEMENTS" },
+    { "source": "action-biogas", "target": "council-esfap", "relationship": "IMPLEMENTS" },
+    { "source": "action-compaction", "target": "council-wms", "relationship": "IMPLEMENTS" },
+    { "source": "action-filling-plan", "target": "council-wms", "relationship": "IMPLEMENTS" },
+    { "source": "action-ppa", "target": "council-esfap", "relationship": "IMPLEMENTS" },
+    { "source": "action-building-solar", "target": "council-esfap", "relationship": "IMPLEMENTS" },
+    { "source": "action-energy-framework", "target": "council-esfap", "relationship": "IMPLEMENTS" },
+    { "source": "action-carbon-kpi", "target": "council-esfap", "relationship": "IMPLEMENTS" },
+    { "source": "action-emergency-preparedness", "target": "council-ccas", "relationship": "IMPLEMENTS" },
+    { "source": "council-wms", "target": "council-albury2050", "relationship": "IMPLEMENTS" },
+    { "source": "council-esfap", "target": "council-albury2050", "relationship": "IMPLEMENTS" },
+    { "source": "council-ccas", "target": "council-albury2050", "relationship": "IMPLEMENTS" },
+    { "source": "council-fleet", "target": "council-albury2050", "relationship": "IMPLEMENTS" },
+    { "source": "council-ramjo", "target": "council-wms", "relationship": "IMPLEMENTS" },
+    { "source": "action-ivc", "target": "action-fogo", "relationship": "REQUIRES" },
+    { "source": "action-mbt", "target": "action-filling-plan", "relationship": "REQUIRES" },
+    { "source": "action-filling-plan", "target": "action-compaction", "relationship": "REQUIRES" },
+    { "source": "form-epl-variation", "target": "state-poeo", "relationship": "GOVERNED_BY" },
+    { "source": "form-da-new-cell", "target": "state-biodiversity", "relationship": "REQUIRES" },
+    { "source": "form-da-new-cell", "target": "fed-epbc", "relationship": "REQUIRES" },
+    { "source": "form-nger-report", "target": "fed-nger", "relationship": "GOVERNED_BY" },
+    { "source": "action-ivc", "target": "form-epl-variation", "relationship": "REQUIRES" },
+    { "source": "action-mbt", "target": "form-epl-variation", "relationship": "REQUIRES" },
+    { "source": "action-cd-mrf", "target": "form-epl-variation", "relationship": "REQUIRES" },
+    { "source": "action-compaction", "target": "form-da-new-cell", "relationship": "DELIVERS" },
+    { "source": "action-ppa", "target": "form-nger-report", "relationship": "DELIVERS" },
+    { "source": "action-building-solar", "target": "form-nger-report", "relationship": "DELIVERS" },
+    { "source": "action-biogas", "target": "form-nger-report", "relationship": "DELIVERS" },
+    { "source": "action-ppa", "target": "form-cpp-pledge", "relationship": "DELIVERS" },
+    { "source": "action-building-solar", "target": "form-cpp-pledge", "relationship": "DELIVERS" },
+    { "source": "form-awmc-gate", "target": "contact-resource-recovery", "relationship": "CONTACTS" },
+    { "source": "form-epl-variation", "target": "contact-nsw-epa", "relationship": "CONTACTS" },
+    { "source": "form-da-new-cell", "target": "contact-planning", "relationship": "CONTACTS" },
+    { "source": "form-nger-report", "target": "contact-sustainability", "relationship": "CONTACTS" },
+    { "source": "form-cpp-pledge", "target": "contact-cpp", "relationship": "CONTACTS" },
+    { "source": "form-budget-climate", "target": "contact-sustainability", "relationship": "CONTACTS" },
+    { "source": "council-ramjo", "target": "contact-ramjo", "relationship": "CONTACTS" },
+    { "source": "action-ivc", "target": "contradiction-epa-composting-rejection", "relationship": "CONTRADICTS" },
+    { "source": "action-fogo", "target": "contradiction-epa-composting-rejection", "relationship": "CONTRADICTS" },
+    { "source": "contradiction-efw-nsw", "target": "state-wasm", "relationship": "CONTRADICTS" },
+    { "source": "council-ccas", "target": "contradiction-ccas-predates-declaration", "relationship": "CONTRADICTS" },
+    { "source": "action-emergency-preparedness", "target": "contradiction-ccas-predates-declaration", "relationship": "CONTRADICTS" },
+    { "source": "council-esfap", "target": "contradiction-scope3-gap", "relationship": "CONTRADICTS" },
+    { "source": "fed-climate-active", "target": "contradiction-scope3-gap", "relationship": "CONTRADICTS" }
+  ]
+}
