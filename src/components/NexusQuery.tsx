@@ -173,7 +173,7 @@ export default function NexusQuery({ graphData, userType, onHighlight, onQuery }
       {/* Search bar row */}
       <div
         className="mt-4 flex items-center gap-2 pointer-events-auto"
-        style={{ width: '42rem', maxWidth: 'calc(100vw - 32rem)' }}
+        style={{ width: '42rem', maxWidth: 'calc(100vw - 36rem)', minWidth: 0 }}
       >
         {/* NEXUS wordmark */}
         <span
@@ -233,8 +233,9 @@ export default function NexusQuery({ graphData, userType, onHighlight, onQuery }
           className="mt-1 pointer-events-auto overflow-y-auto"
           style={{
             width: '42rem',
-            maxWidth: 'calc(100vw - 32rem)',
-            maxHeight: '70vh',
+            maxWidth: 'calc(100vw - 36rem)',
+            minWidth: 0,
+            maxHeight: '60vh',
             background: 'rgba(8,20,42,0.98)',
             border: '1px solid rgba(29,158,117,0.3)',
             borderRadius: 2,
